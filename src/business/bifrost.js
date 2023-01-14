@@ -57,13 +57,12 @@ async function getBifrostSyncVersionNumber (actionCore, github) {
     getVersionNumber(repoConfigVersion)
   )
 
-  if (outdated) {
+  if (outdated) {    
+    const owner = "finanzero"
+    const token = actionCore.getInput('token')
     const repositories = [
-      'git-test'
+      'integration.iti'
     ]
-
-    const token = 'bearer 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' // actionCore.getInput('token')
-    // const dryrun = actionCore.getBooleanInput('dryrun')
   
     const committer = {
       commit: true,
@@ -73,13 +72,12 @@ async function getBifrostSyncVersionNumber (actionCore, github) {
   
     const octokit = github.getOctokit(token)
     console.log('Committer REST API', 'ok')
+
     try {
       console.log('Committer account', (await octokit.rest.users.getAuthenticated()).data.login)
     } catch {
       console.log('Committer account', '(github-actions)')
     }
-  
-    console.log('Using branch', committer.branch)
     
     const files = await getBifrostFiles()
 
@@ -99,7 +97,7 @@ async function getBifrostSyncVersionNumber (actionCore, github) {
             const fileName = file.Key.replace('bifrost/', '')
             const body = await readObjectBody(file)
             const sha = await getSHA({
-              github,
+              owner,
               token,
               branch: committer.branch,
               fileName,
@@ -109,12 +107,13 @@ async function getBifrostSyncVersionNumber (actionCore, github) {
             })
     
             await upsertFileContents({
-              github,
+              owner,
               fileName,
               repositoryName,
               fileBody: body.toString('base64'),
               branch: committer.branch,
-              sha
+              sha,
+              createOrUpdateFileContents: octokit.rest.repos.createOrUpdateFileContents
             })
           }
         }

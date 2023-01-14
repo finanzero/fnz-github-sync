@@ -3,17 +3,17 @@ const fs = require('fs/promises')
 const path = require('path')
 
 async function getSHA(params) {
-  const {github, token, repositoryName, branch, fileName, fileContent, octokit} = params
+  const {owner, token, repositoryName, branch, fileName, fileContent, octokit} = params
 
   const { repository } = await octokit.graphql(
     `
     query Sha {
-      repository(owner: "${github.context.repo.owner}", name: "${repositoryName}") {
+      repository(owner: "${owner}", name: "${repositoryName}") {
         object(expression: "${branch}:${fileName}") { ... on Blob { oid } }
       }
     }
   `,
-    { headers: { authorization: `token ${token}` } },
+    { headers: { authorization: `bearer ${token}` } },
   )
 
   if (repository) {
@@ -39,10 +39,10 @@ async function getSHA(params) {
 }
 
 async function upsertFileContents(params) {
-  const {github, repositoryName, fileName, fileBody, branch, sha} = params
+  const {owner, repositoryName, fileName, fileBody, branch, sha, createOrUpdateFileContents} = params
 
-  const result = await octokit.rest.repos.createOrUpdateFileContents({
-    owner: github.context.repo.owner,
+  const result = await createOrUpdateFileContents({
+    owner,
     repo: repositoryName,
     path: `.github/${fileName}`,
     message: `updating ${fileName}`,
@@ -51,7 +51,7 @@ async function upsertFileContents(params) {
     ...(sha ? {sha} : {})
   })
 
-  console.log(`${fileName} updated`, result)
+  console.log(`${repositoryName} - ${fileName} updated`, result)
 } 
 
 module.exports = {
