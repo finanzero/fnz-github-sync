@@ -4,10 +4,10 @@ author: 'Rafael Vilarinho'
 branding:
   icon: user-check
   color: gray-dark
-# inputs:
-#   input_name:
-#     description: ''
-#     required: true
+inputs:
+  bifrost-version:
+    description: 'Bifrost Sync Version'
+    required: false
 
 runs:
   using: 'node12'
