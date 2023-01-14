@@ -11,10 +11,8 @@ async function getSHA(params) {
   `,
     { headers: { authorization: `token ${token}` } },
   )
-
-  console.log('getting oid', {repository})
   
-  return repository.object.oid
+  return repository?.object?.oid
 }
 
 module.exports = {

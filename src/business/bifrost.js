@@ -85,6 +85,13 @@ async function getBifrostSyncVersionNumber (actionCore, github) {
       if (file.Key !== "bifrost/" && file.Key !== "bifrost/version") {
         const fileName = file.Key.replace('bifrost/', '')
         const body = await readObjectBody(file)
+        const sha = await getSHA({
+          github,
+          token,
+          branch: committer.branch,
+          fileName,
+          octokit,
+        })
 
         await octokit.rest.repos.createOrUpdateFileContents({
           ...github.context.repo,
@@ -92,13 +99,7 @@ async function getBifrostSyncVersionNumber (actionCore, github) {
           message: `updating ${fileName}`,
           content: body.toString('base64'),
           branch: committer.branch,
-          sha: await getSHA({
-            github,
-            token,
-            branch: committer.branch,
-            fileName,
-            octokit,
-          })
+          ...(sha ? {sha} : {})
         })
 
         console.log(`${fileName} updated`)
