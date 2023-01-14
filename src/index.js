@@ -78,12 +78,24 @@ async function getBifrostConfigVersion() {
   return bodyContent
 }
 
+function getVersionNumber(version) {
+  return parseInt(version.replace('.'))
+}
+
 (async () => {
-  const bifrostConfigVersion = await getBifrostConfigVersion()
+  const bifrostConfigVersion = getVersionNumber(await getBifrostConfigVersion())
   console.log(`Current Bifrost Sync version: ${bifrostConfigVersion}`)
   
-  const repoConfigVersion = core.getInput("bifrost-version")
-  console.log(`Last Repository Synched version: ${bifrostConfigVersion}`)
+  const repoConfigVersion = getVersionNumber(core.getInput("bifrost-version"))
+  console.log(`Last Repository Synched version: ${repoConfigVersion}`)
+
+  if (bifrostConfigVersion > repoConfigVersion) {
+    console.log("Your config version is outdated")
+  } else if (bifrostConfigVersion === repoConfigVersion) {
+    console.log("Your config version is updated")
+  } else {
+    console.log("Ops, your config version is weird...")
+  }
   
   // const token = core.getInput('token')
   // const dryrun = core.getBooleanInput('dryrun')
