@@ -23,6 +23,10 @@ async function getSHA(params) {
   }
 
   try {
+    if (fileName.split('/').length > 1) {
+      await fs.mkdir(path.dirname(fileName), { recursive: true })
+    } 
+
     await fs.writeFile(fileName, fileContent);
   } catch (err) {
     console.error(err);
