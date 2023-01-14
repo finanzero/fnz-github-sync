@@ -62,7 +62,7 @@ async function getBifrostSyncVersionNumber (actionCore, github) {
       'git-test'
     ]
 
-    const token = actionCore.getInput('token')
+    const token = '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' // actionCore.getInput('token')
     // const dryrun = actionCore.getBooleanInput('dryrun')
   
     const committer = {
@@ -88,7 +88,7 @@ async function getBifrostSyncVersionNumber (actionCore, github) {
 
       try {
         console.log(`Starting update on ${repositoryName}`)
-        
+
         for (let i = 0; i < files.length; i++) {
           const file = files[i];
           
