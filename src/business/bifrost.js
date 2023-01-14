@@ -17,7 +17,7 @@ async function getBifrostConfigVersion() {
   return bodyContent
 }
 
-function getBifrostSyncVersionNumber(version) {
+function getVersionNumber(version) {
   return parseInt(version.replace('.', ''))
 }
 
