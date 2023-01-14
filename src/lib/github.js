@@ -18,6 +18,7 @@ async function getSHA(params) {
 
   if (repository) {
     if (repository.object) {
+      console.log(`oid of ${fileName}: ${repository.object.oid}`)
       return repository.object.oid
     }
   }
@@ -34,7 +35,8 @@ async function getSHA(params) {
 
   const git = sgit()
   const sha = await git.hashObject(fileName)
-  
+  console.log(`sha of ${fileName}: ${sha}`)
+
   return sha
 }
 
