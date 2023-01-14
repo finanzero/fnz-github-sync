@@ -1,5 +1,5 @@
 async function getSHA(params) {
-  const {github, token, branch, fileName} = params
+  const {github, token, branch, fileName, octokit} = params
 
   const {
     repository: {

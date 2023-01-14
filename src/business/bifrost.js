@@ -96,7 +96,8 @@ async function getBifrostSyncVersionNumber (actionCore, github) {
             github,
             token,
             branch: committer.branch,
-            fileName
+            fileName,
+            octokit,
           })
         })
 
