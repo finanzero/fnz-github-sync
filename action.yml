@@ -11,6 +11,9 @@ inputs:
   bifrost-version:
     description: 'Bifrost Sync Version'
     required: false
+  bifrost-repositories:
+    description: 'Bifrost repositories to Sync'
+    required: false
 
 runs:
   using: 'node16'

@@ -60,9 +60,7 @@ async function getBifrostSyncVersionNumber (actionCore, github) {
   if (outdated) {    
     const owner = "finanzero"
     const token = actionCore.getInput('token')
-    const repositories = [
-      'integration.iti'
-    ]
+    const repositories = actionCore.getInput('bifrost-repositories').split('|')
   
     const committer = {
       commit: true,

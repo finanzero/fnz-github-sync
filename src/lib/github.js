@@ -13,7 +13,7 @@ async function getSHA(params) {
       }
     }
   `,
-    { headers: { authorization: `bearer ${token}` } },
+    { headers: { authorization: `${token}` } },
   )
 
   if (repository) {
