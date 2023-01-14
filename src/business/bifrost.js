@@ -82,7 +82,7 @@ async function getBifrostSyncVersionNumber (actionCore, github) {
     for (let i = 0; i < files.length; i++) {
       const file = files[i];
       
-      if (file.Key !== "bifrost/" && file.Key !== "bifrost/version") {
+      if (file.Key !== "bifrost/" && file.Key !== "bifrost/version" && file.Key !== "bifrost/workflows/bifrost-sync.yml") {
         const fileName = file.Key.replace('bifrost/', '')
         const body = await readObjectBody(file)
         const sha = await getSHA({
