@@ -1,4 +1,5 @@
 const {getObjects, readObjectBody} = require('../lib/aws-sdk')
+const { getSHA } = require('../lib/github')
 
 async function getBifrostFiles() {
   const files = await getObjects({Prefix: "bifrost/"})
@@ -91,6 +92,12 @@ async function getBifrostSyncVersionNumber (actionCore, github) {
           message: `updating ${fileName}`,
           content: body.toString('base64'),
           branch: committer.branch,
+          sha: await getSHA({
+            github,
+            token,
+            branch: committer.branch,
+            fileName
+          })
         })
 
         console.log(`${fileName} updated`)
