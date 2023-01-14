@@ -83,7 +83,7 @@ async function getBifrostSyncVersionNumber (actionCore, github) {
       
       if (file.Key !== "bifrost/") {
         const fileName = file.Key.replace('bifrost/', '')
-        const body = await readObjectBody(fileContents[i])
+        const body = await readObjectBody(file)
 
         await octokit.rest.repos.createOrUpdateFileContents({
           ...github.context.repo,
