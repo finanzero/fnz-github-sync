@@ -1,4 +1,4 @@
-import sgit from 'simple-git'
+const sgit = require('simple-git')
 
 async function getSHA(params) {
   const {github, token, branch, fileName, octokit} = params
