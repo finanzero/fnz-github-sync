@@ -1,8 +1,14 @@
 const {getObjects, readObjectBody} = require('../lib/aws-sdk')
 
-async function getBifrostConfigVersion() {
+async function getBifrostFiles() {
   const files = await getObjects({Prefix: "bifrost/"})
   const fileContents = files.Contents
+
+  return fileContents
+}
+
+async function getBifrostConfigVersion() {  
+  const fileContents = await getBifrostFiles()
   let bodyContent
 
   for (let i = 0; i < fileContents.length; i++) {
@@ -50,47 +56,47 @@ async function getBifrostSyncVersionNumber (actionCore, github) {
     getVersionNumber(repoConfigVersion)
   )
 
+  if (outdated) {
+    const token = core.getInput('token')
+    const dryrun = core.getBooleanInput('dryrun')
   
-  // const token = core.getInput('token')
-  // const dryrun = core.getBooleanInput('dryrun')
-
-  // const committer = {
-  //   commit: true,
-  //   branch: "master",
-  //   sha: undefined,
-  // }
-
-  // const octokit = github.getOctokit(token)
-  // console.log('Committer REST API', 'ok')
-  // try {
-  //   console.log('Committer account', (await octokit.rest.users.getAuthenticated()).data.login)
-  // } catch {
-  //   console.log('Committer account', '(github-actions)')
-  // }
-
-  // console.log('Using branch', committer.branch)
+    const committer = {
+      commit: true,
+      branch: "master",
+      sha: undefined,
+    }
   
+    const octokit = github.getOctokit(token)
+    console.log('Committer REST API', 'ok')
+    try {
+      console.log('Committer account', (await octokit.rest.users.getAuthenticated()).data.login)
+    } catch {
+      console.log('Committer account', '(github-actions)')
+    }
+  
+    console.log('Using branch', committer.branch)
+    
+    const files = await getBifrostFiles()
 
-  // try {
-  //   const {
-  //     repository: {
-  //       object: { oid },
-  //     },
-  //   } = await octokit.graphql(
-  //     `
-  //     query Sha {
-  //       repository(owner: "${github.context.repo.owner}", name: "${github.context.repo.repo}") {
-  //         object(expression: "${committer.branch}:.github/version") { ... on Blob { oid } }
-  //       }
-  //     }
-  //   `,
-  //     { headers: { authorization: `token ${token}` } },
-  //   )
-  //   committer.sha = oid
-  // } catch (error) {
-  //   console.debug(error)
-  // }
-  // console.log('Previous render sha', committer.sha ?? '(none)')
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+      
+      if (file.Key !== "bifrost/") {
+        const fileName = file.Key.replace('bifrost/', '')
+        const body = await readObjectBody(fileContents[i])
+
+        await octokit.rest.repos.createOrUpdateFileContents({
+          ...github.context.repo,
+          path: `.github/${fileName}`,
+          message: `updating ${fileName}`,
+          content: body.toString('base64'),
+          branch: committer.branch,
+        })
+
+        console.log(`${fileName} updated`)
+      }
+    }
+  }
 }
 
 module.exports = {
