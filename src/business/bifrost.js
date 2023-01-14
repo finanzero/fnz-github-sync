@@ -1,7 +1,7 @@
 const {getObjects, readObjectBody} = require('../lib/aws-sdk')
 
 async function getBifrostConfigVersion() {
-  const files = await getObjects({Prefix: "/bifrost"})
+  const files = await getObjects({Prefix: "bifrost/"})
   const fileContents = files.Contents
   let bodyContent
 
