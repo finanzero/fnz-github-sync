@@ -1,11 +1,7 @@
 async function getSHA(params) {
   const {github, token, branch, fileName, octokit} = params
 
-  const {
-    repository: {
-      object: { oid },
-    },
-  } = await octokit.graphql(
+  const { repository } = await octokit.graphql(
     `
     query Sha {
       repository(owner: "${github.context.repo.owner}", name: "${github.context.repo.repo}") {
@@ -15,8 +11,10 @@ async function getSHA(params) {
   `,
     { headers: { authorization: `token ${token}` } },
   )
+
+  console.log('getting oid', {repository})
   
-  return oid
+  return repository.object.oid
 }
 
 module.exports = {
