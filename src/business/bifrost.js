@@ -1,5 +1,5 @@
 const {getObjects, readObjectBody} = require('../lib/aws-sdk')
-const { getSHA } = require('../lib/github')
+const { getSHA, upsertFileContents } = require('../lib/github')
 
 async function getBifrostFiles() {
   const files = await getObjects({Prefix: "bifrost/"})
@@ -58,6 +58,10 @@ async function getBifrostSyncVersionNumber (actionCore, github) {
   )
 
   if (outdated) {
+    const repositories = [
+      'git-test'
+    ]
+
     const token = actionCore.getInput('token')
     // const dryrun = actionCore.getBooleanInput('dryrun')
   
@@ -79,32 +83,45 @@ async function getBifrostSyncVersionNumber (actionCore, github) {
     
     const files = await getBifrostFiles()
 
-    for (let i = 0; i < files.length; i++) {
-      const file = files[i];
-      
-      if (file.Key !== "bifrost/" && file.Key !== "bifrost/version" && file.Key !== "bifrost/workflows/bifrost-sync.yml") {
-        const fileName = file.Key.replace('bifrost/', '')
-        const body = await readObjectBody(file)
-        const sha = await getSHA({
-          github,
-          token,
-          branch: committer.branch,
-          fileName,
-          fileContent: body.toString(),
-          octokit,
-        })
+    for (let k = 0; k < repositories.length; k++) {
+      const repositoryName = repositories[k];
 
-        await octokit.rest.repos.createOrUpdateFileContents({
-          ...github.context.repo,
-          path: `.github/${fileName}`,
-          message: `updating ${fileName}`,
-          content: body.toString('base64'),
-          branch: committer.branch,
-          ...(sha ? {sha} : {})
-        })
-
-        console.log(`${fileName} updated`)
+      try {
+        console.log(`Starting update on ${repositoryName}`)
+        
+        for (let i = 0; i < files.length; i++) {
+          const file = files[i];
+          
+          if (
+            file.Key !== "bifrost/"
+            && file.Key !== "bifrost/version"
+          ) {
+            const fileName = file.Key.replace('bifrost/', '')
+            const body = await readObjectBody(file)
+            const sha = await getSHA({
+              github,
+              token,
+              branch: committer.branch,
+              fileName,
+              repositoryName,
+              fileContent: body.toString(),
+              octokit,
+            })
+    
+            await upsertFileContents({
+              github,
+              fileName,
+              repositoryName,
+              fileBody: body.toString('base64'),
+              branch: committer.branch,
+              sha
+            })
+          }
+        }
+      } catch (error) {
+        console.error(`Error on updating ${repositoryName}`, error)
       }
+      
     }
   }
 }

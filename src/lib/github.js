@@ -3,12 +3,12 @@ const fs = require('fs/promises')
 const path = require('path')
 
 async function getSHA(params) {
-  const {github, token, branch, fileName, fileContent, octokit} = params
+  const {github, token, repositoryName, branch, fileName, fileContent, octokit} = params
 
   const { repository } = await octokit.graphql(
     `
     query Sha {
-      repository(owner: "${github.context.repo.owner}", name: "${github.context.repo.repo}") {
+      repository(owner: "${github.context.repo.owner}", name: "${repositoryName}") {
         object(expression: "${branch}:${fileName}") { ... on Blob { oid } }
       }
     }
@@ -38,6 +38,23 @@ async function getSHA(params) {
   return sha
 }
 
+async function upsertFileContents(params) {
+  const {github, repositoryName, fileName, fileBody, branch, sha} = params
+
+  const result = await octokit.rest.repos.createOrUpdateFileContents({
+    owner: github.context.repo.owner,
+    repo: repositoryName,
+    path: `.github/${fileName}`,
+    message: `updating ${fileName}`,
+    content: fileBody.toString('base64'),
+    branch,
+    ...(sha ? {sha} : {})
+  })
+
+  console.log(`${fileName} updated`, result)
+} 
+
 module.exports = {
-  getSHA
+  getSHA,
+  upsertFileContents,
 }
