@@ -79,15 +79,52 @@ async function getBifrostConfigVersion() {
 }
 
 (async () => {
+  const bifrostConfigVersion = await getBifrostConfigVersion()
+  console.log(`Current Bifrost Sync version: ${bifrostConfigVersion}`)
+  
+  const repoConfigVersion = core.getInput("bifrost-version")
+  console.log(`Last Repository Synched version: ${bifrostConfigVersion}`)
+  
   // const token = core.getInput('token')
-  // const branch = core.getInput('commit_branch')
-  // const message = core.getInput('commit_message')
-  // const filename = core.getInput('commit_filename')
   // const dryrun = core.getBooleanInput('dryrun')
 
-  const bifrostConfigVersion = await getBifrostConfigVersion()
+  // const committer = {
+  //   commit: true,
+  //   branch: "master",
+  //   sha: undefined,
+  // }
+
+  // const octokit = github.getOctokit(token)
+  // console.log('Committer REST API', 'ok')
+  // try {
+  //   console.log('Committer account', (await octokit.rest.users.getAuthenticated()).data.login)
+  // } catch {
+  //   console.log('Committer account', '(github-actions)')
+  // }
+
+  // console.log('Using branch', committer.branch)
   
-  console.log(bifrostConfigVersion)
+
+  // try {
+  //   const {
+  //     repository: {
+  //       object: { oid },
+  //     },
+  //   } = await octokit.graphql(
+  //     `
+  //     query Sha {
+  //       repository(owner: "${github.context.repo.owner}", name: "${github.context.repo.repo}") {
+  //         object(expression: "${committer.branch}:.github/version") { ... on Blob { oid } }
+  //       }
+  //     }
+  //   `,
+  //     { headers: { authorization: `token ${token}` } },
+  //   )
+  //   committer.sha = oid
+  // } catch (error) {
+  //   console.debug(error)
+  // }
+  // console.log('Previous render sha', committer.sha ?? '(none)')
 })()
 
 /**
