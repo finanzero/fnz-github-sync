@@ -62,7 +62,7 @@ async function getBifrostSyncVersionNumber (actionCore, github) {
       'git-test'
     ]
 
-    const token = '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' // actionCore.getInput('token')
+    const token = 'bearer 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' // actionCore.getInput('token')
     // const dryrun = actionCore.getBooleanInput('dryrun')
   
     const committer = {
