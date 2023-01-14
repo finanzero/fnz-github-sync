@@ -1,3 +1,5 @@
+import sgit from 'simple-git'
+
 async function getSHA(params) {
   const {github, token, branch, fileName, octokit} = params
 
@@ -17,8 +19,11 @@ async function getSHA(params) {
       return repository.object.oid
     }
   }
+
+  const git = sgit()
+  const sha = await git.hashObject(fileName)
   
-  return null
+  return sha
 }
 
 module.exports = {
