@@ -1,0 +1,14 @@
+name: '@finanzero/fnz-github-sync'
+description: 'GitHub Action to sync repository config'
+author: 'Rafael Vilarinho'
+branding:
+  icon: user-check
+  color: gray-dark
+# inputs:
+#   input_name:
+#     description: ''
+#     required: true
+
+runs:
+  using: 'node12'
+  main: 'src/index.js'
