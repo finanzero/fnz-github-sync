@@ -58,7 +58,7 @@ async function getBifrostSyncVersionNumber (actionCore, github) {
 
   if (outdated) {
     const token = actionCore.getInput('token')
-    const dryrun = actionCore.getBooleanInput('dryrun')
+    // const dryrun = actionCore.getBooleanInput('dryrun')
   
     const committer = {
       commit: true,
