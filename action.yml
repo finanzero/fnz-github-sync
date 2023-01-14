@@ -5,6 +5,9 @@ branding:
   icon: user-check
   color: gray-dark
 inputs:
+  token:
+    description: 'Github Token'
+    required: true
   bifrost-version:
     description: 'Bifrost Sync Version'
     required: false
