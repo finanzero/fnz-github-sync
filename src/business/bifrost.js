@@ -39,14 +39,17 @@ function isOutdated(current, old) {
 }
 
 async function getBifrostSyncVersionNumber (actionCore, github) {
-  const bifrostConfigVersion = getVersionNumber(await getBifrostConfigVersion())
+  const bifrostConfigVersion = await getBifrostConfigVersion()
   console.log(`Current Bifrost Sync version: ${bifrostConfigVersion}`)
   
-  const repoConfigVersion = getVersionNumber(actionCore.getInput("bifrost-version"))
+  const repoConfigVersion = actionCore.getInput("bifrost-version")
   console.log(`Last Repository Synched version: ${repoConfigVersion}`)
 
-  const outdated = isOutdated(bifrostConfigVersion, repoConfigVersion)
-  
+  const outdated = isOutdated(
+    getVersionNumber(bifrostConfigVersion), 
+    getVersionNumber(repoConfigVersion)
+  )
+
   
   // const token = core.getInput('token')
   // const dryrun = core.getBooleanInput('dryrun')
