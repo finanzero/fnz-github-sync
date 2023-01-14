@@ -1,7 +1,9 @@
 const sgit = require('simple-git')
+const fs = require('fs/promises')
+const path = require('path')
 
 async function getSHA(params) {
-  const {github, token, branch, fileName, octokit} = params
+  const {github, token, branch, fileName, fileContent, octokit} = params
 
   const { repository } = await octokit.graphql(
     `
@@ -18,6 +20,12 @@ async function getSHA(params) {
     if (repository.object) {
       return repository.object.oid
     }
+  }
+
+  try {
+    await fs.writeFile(fileName, fileContent);
+  } catch (err) {
+    console.error(err);
   }
 
   const git = sgit()
